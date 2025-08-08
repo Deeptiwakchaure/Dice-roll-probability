@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goodbye</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .game-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #343a40;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        .dice-icon {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            animation: bounce 2s infinite;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .dice-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+        .message {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #6c757d;
+        }
+        .btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #007bff, #6610f2);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-container">
+            <div class="dice-icon">
+               <img src="{{ url_for('static', filename='images/sleepy.png') }}" alt="Sleepy Dice">
+            </div>
+            <h1>Goodbye!</h1>
+            <p class="message">Thanks for playing the Dice Probability Game!</p>
+            <a href="/" class="btn">
+                <i class="fas fa-redo mr-2"></i>Play Again
+            </a>
+        </div>
+    </div>
+</body>
+</html>

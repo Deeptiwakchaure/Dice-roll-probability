@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Target Sum Value</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .game-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        .dice-icon {
+            font-size: 72px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #007bff;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+        .form-group {
+            margin-bottom: 30px;
+        }
+        .form-control {
+            height: 50px;
+            font-size: 18px;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            padding: 10px 20px;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .btn {
+            display: block;
+            margin: 0 auto;
+            padding: 12px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #007bff, #6610f2);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+        .error {
+            color: #dc3545;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .range-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #6c757d;
+            font-size: 18px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+        }
+        .dice-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .dice-visual-item {
+            font-size: 36px;
+            margin: 0 5px;
+            animation: float 3s ease-in-out infinite;
+        }
+        .dice-visual-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .dice-visual-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+        .dice-visual-item:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .plus-sign {
+            font-size: 36px;
+            color: #6c757d;
+            margin: 0 5px;
+            display: flex;
+            align-items: center;
+        }
+        .equal-sign {
+            font-size: 36px;
+            color: #6c757d;
+            margin: 0 5px;
+            display: flex;
+            align-items: center;
+        }
+        .target-input {
+            width: 80px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .target-input:focus {
+            outline: none;
+            border-color: #6610f2;
+            box-shadow: 0 0 0 0.2rem rgba(102, 16, 242, 0.25);
+        }
+        .formula {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 18px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-container">
+            <div class="dice-icon">🎲</div>
+            <h1>Target Sum Value</h1>
+            
+            {% if error %}
+            <div class="error">
+                <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+            </div>
+            {% endif %}
+            
+            <div class="range-info">
+                <i class="fas fa-info-circle mr-2"></i>The sum must be between {{ min_sum }} and {{ max_sum }}
+            </div>
+            
+            <div class="dice-visual" id="dice-container">
+                <!-- Dice will be dynamically added here -->
+            </div>
+            
+            <div class="formula">
+                Minimum: {{ min_sum }} | Maximum: {{ max_sum }}
+            </div>
+            
+            <form action="/show_probability" method="post">
+                <div class="form-group">
+                    <label for="target_sum">What is your target sum?</label>
+                    <input type="number" class="form-control" id="target_sum" name="target_sum" 
+                           min="{{ min_sum }}" max="{{ max_sum }}" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-calculator mr-2"></i>Calculate Probability
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the dice count from the template context
+            const diceCount = {{ dice_count }};
+            const diceContainer = document.getElementById('dice-container');
+            const targetSumInput = document.getElementById('target_sum');
+            
+            // Create dice visual elements
+            for (let i = 0; i < diceCount; i++) {
+                // Add dice
+                const dice = document.createElement('span');
+                dice.className = 'dice-visual-item';
+                dice.textContent = '🎲';
+                diceContainer.appendChild(dice);
+                
+                // Add plus sign except for the last dice
+                if (i < diceCount - 1) {
+                    const plus = document.createElement('span');
+                    plus.className = 'plus-sign';
+                    plus.textContent = '+';
+                    diceContainer.appendChild(plus);
+                }
+            }
+            
+            // Add equal sign
+            const equal = document.createElement('span');
+            equal.className = 'equal-sign';
+            equal.textContent = '=';
+            diceContainer.appendChild(equal);
+            
+            // Add target input
+            const targetInput = document.createElement('input');
+            targetInput.type = 'number';
+            targetInput.className = 'target-input';
+            targetInput.id = 'target_sum_visual';
+            targetInput.name = 'target_sum_visual';
+            targetInput.min = {{ min_sum }};
+            targetInput.max = {{ max_sum }};
+            targetInput.required = true;
+            diceContainer.appendChild(targetInput);
+            
+            // Sync the two input fields
+            targetSumInput.addEventListener('input', function() {
+                targetInput.value = this.value;
+            });
+            
+            targetInput.addEventListener('input', function() {
+                targetSumInput.value = this.value;
+            });
+            
+            // Add visual feedback when input changes
+            targetInput.addEventListener('input', function() {
+                this.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
