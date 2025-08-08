@@ -2,9 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import random
 import numpy as np
 import decimal
+import os  # Added for environment variables
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Change this to a random secret key
+# Updated to use environment variable for secret key
+app.secret_key = os.environ.get('SECRET_KEY', 'your_secret_key_here')  
 
 # Constants
 FACES = 6
@@ -94,7 +96,7 @@ def handle_target_sum():
     if choice == 'Yes':
         return redirect(url_for('ask_target_sum_value'))
     else:
-        return redirect(url_for('roll_dice'))
+        return redirect(url_for('roll_dice_route'))  # Fixed: changed from roll_dice to roll_dice_route
 
 @app.route('/ask_target_sum_value')
 def ask_target_sum_value():
@@ -102,7 +104,10 @@ def ask_target_sum_value():
     dice_count = session.get('dice_count', 1)
     min_sum = dice_count
     max_sum = dice_count * FACES
-    return render_template('ask_target_sum_value.html', min_sum=min_sum, max_sum=max_sum)
+    return render_template('ask_target_sum_value.html', 
+                          min_sum=min_sum, 
+                          max_sum=max_sum,
+                          dice_count=dice_count)  # Added dice_count for template
 
 @app.route('/show_probability', methods=['POST'])
 def show_probability():
@@ -117,7 +122,9 @@ def show_probability():
             max_sum = dice_count * FACES
             return render_template('ask_target_sum_value.html', 
                                   error=f"The sum must be between {min_sum} and {max_sum}",
-                                  min_sum=min_sum, max_sum=max_sum)
+                                  min_sum=min_sum, 
+                                  max_sum=max_sum,
+                                  dice_count=dice_count)  # Added dice_count for template
         
         prob, ways_str, total_str = probability_of_sum(dice_count, target_sum)
         
@@ -133,7 +140,9 @@ def show_probability():
         max_sum = dice_count * FACES
         return render_template('ask_target_sum_value.html', 
                               error="Please enter a valid integer.",
-                              min_sum=min_sum, max_sum=max_sum)
+                              min_sum=min_sum, 
+                              max_sum=max_sum,
+                              dice_count=dice_count)  # Added dice_count for template
 
 @app.route('/roll_dice')
 def roll_dice_route():
@@ -159,5 +168,8 @@ def roll_again():
     else:
         return render_template('goodbye.html')
 
+# Updated for production deployment
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # Get port from environment
+    debug = os.environ.get('DEBUG', 'False') == 'True'  # Get debug mode from environment
+    app.run(host='0.0.0.0', port=port, debug=debug)  # Run with production settings
